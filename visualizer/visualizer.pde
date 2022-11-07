@@ -1,8 +1,6 @@
 import processing.serial.*;
 import processing.sound.*;
 AudioIn input, audio;
-// TODO:
-// ADD BUTTON TO STOP THE WAVEFORM
 
 Serial myPort;        
 int xPos = 1;         
