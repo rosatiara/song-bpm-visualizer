@@ -13,9 +13,6 @@ float[] beats = new float[500];
 int beatIndex;
 float threshold = 620.0;  
 boolean belowThreshold = true;
-Amplitude loudness;
-BeatDetector beatDetector;
-Amplitude amp;
 String inString;
 PFont poppins;
 boolean stopPressed = false;
@@ -42,7 +39,6 @@ void setup () {
 
 
 void draw () {
-  
       fill(255);
       text(title, 400, 60);
       textAlign(CENTER, CENTER);
@@ -53,15 +49,14 @@ void draw () {
         rect(300, 115, 200, 50);
         fill(255);
         text("BPM: " + inByte, 400, 125);
-        
-      }
+        }
       
-      StopButton();
-      StopButtonController();
-      inByte = map(inByte, 0, 1023, 0, height/2);
-      height_new = height - inByte; 
-      line(xPos - 1, height_old, xPos, height_new);
-      height_old = height_new;
+        StopButton();
+        StopButtonController();
+        inByte = map(inByte, 0, 1023, 0, height/2);
+        height_new = height - inByte; 
+        line(xPos - 1, height_old, xPos, height_new);
+        height_old = height_new;
         if (xPos >= width) {
           xPos = 0;
           background(49, 65, 161);
@@ -71,38 +66,27 @@ void draw () {
         }
 }
 
-// void serialEvent(Serial myPort)
-void serialEvent (Serial myPort) 
-{
-
-  String batas = "180";
+void serialEvent (Serial myPort) {
   try {
       inString = myPort.readStringUntil('\n');
       println(inString);
 
-  if (inString != null) 
-  {
+  if (inString != null) {
     inString = trim(inString);
-
-    if (inString.equals("!")) 
-    { 
+    if (inString.equals("!")) { 
       stroke(0); 
       strokeWeight(2);
       inByte = float(inString);  
     }
-    
-    else 
-    {
+    else {
       stroke(255); 
       strokeWeight(2);
       inByte = float(inString); 
-      if (inByte > threshold && belowThreshold == true)
-      {
+      if (inByte > threshold && belowThreshold == true) {
         calculateBPM();
         belowThreshold = false;
       }
-      else if(inByte < threshold)
-      {
+      else if(inByte < threshold) {
         belowThreshold = true;
       }
     }
@@ -114,8 +98,7 @@ void serialEvent (Serial myPort)
   }
 }
   
-void calculateBPM () 
-{  
+void calculateBPM () {  
   try {
     int beat_new = millis();   
     int diff = beat_new - beat_old;    
@@ -129,17 +112,16 @@ void calculateBPM ()
     beat_old = beat_new;
     beatIndex = (beatIndex + 1) % 500; 
   }
-  catch(ArithmeticException e){
+  catch(ArithmeticException e) {
       e.printStackTrace();
      }
-  }
+}
   
-public void StopButton(){
-fill(85, 103, 186);
-rect(btnX, btnY, btnWidth, btnHeight, btnRadius);
-fill(255);
-text("STOP", 407, 185);
-
+public void StopButton() {
+  fill(85, 103, 186);
+  rect(btnX, btnY, btnWidth, btnHeight, btnRadius);
+  fill(255);
+  text("STOP", 407, 185);
 }
 
 public void StopButtonController(){
@@ -149,6 +131,5 @@ public void StopButtonController(){
       noLoop();
       fill(255);
       text("Visualizer stopped.", 400, 250);
-      
   }
 }
