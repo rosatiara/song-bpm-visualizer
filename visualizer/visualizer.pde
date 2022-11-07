@@ -6,16 +6,16 @@ Serial myPort;
 int xPos = 1;         
 float height_old = 0;
 float height_new = 0;
-float inByte = 0;
+float dataByte = 0;
 int BPM = 0;
 int beat_old = 0;
 float[] beats = new float[500]; 
 int beatIndex;
-float threshold = 620.0;  
-boolean belowThreshold = true;
-String inString;
+float limit = 650.0;  
+boolean belowLimit = true;
+String dataString;
+
 PFont poppins;
-boolean stopPressed = false;
 String title = "Lemon Tree\nFools Garden";
 
 // button properties
@@ -24,6 +24,7 @@ int btnY = 170;
 int btnWidth = 120;
 int btnHeight = 40;
 int btnRadius = 15;
+boolean stopPressed = false;
 
 
 void setup () {
@@ -49,15 +50,15 @@ void draw () {
           noStroke(); // delete border for the container
           rect(300, 115, 200, 50);
           fill(255);
-          text("BPM: " + inByte, 400, 125);
+          text("BPM: " + dataByte, 400, 125);
         }
       
         StopButton(); 
         StopButtonController();
         
         // map the waveform from serial input
-        inByte = map(inByte, 0, 1023, 0, height/2);
-        height_new = height - inByte; 
+        dataByte = map(dataByte, 0, 1023, 0, height/2);
+        height_new = height - dataByte; 
         line(xPos - 1, height_old, xPos, height_new);
         height_old = height_new;
         if (xPos >= width) { // if the waveform is at the end of screen, back to the start of the screenWidth (x = 0)
@@ -71,26 +72,26 @@ void draw () {
 
 void serialEvent (Serial myPort) { // fetching serial data
   try {
-      inString = myPort.readStringUntil('\n'); // keep reading the data until a newline is present
-      println(inString); // print data to the console
+      dataString = myPort.readStringUntil('\n'); // keep reading the data until a newline is present
+      println(dataString); // print data to the console
 
-  if (inString != null) { // if the data is present
-    inString = trim(inString);
-    if (inString.equals("!")) { 
-      stroke(0); 
+  if (dataString != null) { // if the data is present
+    dataString = trim(dataString);
+    if (dataString.equals("!")) { 
+      stroke(255); 
       strokeWeight(2);
-      inByte = float(inString);  
+      dataByte = float(dataString);  
     }
     else {
       stroke(255); 
       strokeWeight(2);
-      inByte = float(inString); 
-      if (inByte > threshold && belowThreshold == true) {
+      dataByte = float(dataString);  // convert Byte ke String
+      if (dataByte > limit && belowLimit == true) {
         calculateBPM();
-        belowThreshold = false;
+        belowLimit = false;
       }
-      else if(inByte < threshold) {
-        belowThreshold = true;
+      else if(dataByte < limit) {
+        belowLimit = true;
       }
     }
   }
@@ -102,9 +103,9 @@ void serialEvent (Serial myPort) { // fetching serial data
   
 void calculateBPM () {  
   try {
-    int beat_new = millis();   
-    int diff = beat_new - beat_old;    
-    float currentBPM = 60000 / diff;    
+    int beat_new = millis();   // current millisecond
+    int diff = beat_new - beat_old;    // time difference beat[i+1] dan beat[i]
+    float currentBPM = 60000 / diff;    // beat per mins (1m = 60s = 60000ms)
     beats[beatIndex] = currentBPM;  
     float total = 0.0;
     for (int i = 0; i < 500; i++){
