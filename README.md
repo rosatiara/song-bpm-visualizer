@@ -1,3 +1,3 @@
 # Song BPM Analyzer & Waveform Visualizer using Arduino & Processing
 ### TinkerCAD
-![circuit](https://github.com/rosatiara/song-bpm-visualizer/assets/tinkercad)
+![tinkercad circuit](https://github.com/rosatiara/song-bpm-visualizer/blob/main/assets/tinkercad.png?raw=true)
