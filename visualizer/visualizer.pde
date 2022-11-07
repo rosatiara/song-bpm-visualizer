@@ -18,6 +18,7 @@ PFont poppins;
 boolean stopPressed = false;
 String title = "Lemon Tree\nFools Garden";
 
+// button properties
 int btnX = 345;
 int btnY = 170;
 int btnWidth = 120;
@@ -30,9 +31,9 @@ void setup () {
   poppins = createFont("poppins-regular.ttf", 20);
   textFont(poppins);
   
-  myPort = new Serial(this, "COM3", 9600);
+  myPort = new Serial(this, "COM3", 9600); 
   println(myPort);
-  myPort.bufferUntil('\n');
+  myPort.bufferUntil('\n'); // wait until there's a new line
   background(49, 65, 161);
 
 }
@@ -43,21 +44,23 @@ void draw () {
       text(title, 400, 60);
       textAlign(CENTER, CENTER);
 
-        if (millis() % 128 == 0){
-        fill(49, 65, 161);
-        noStroke();
-        rect(300, 115, 200, 50);
-        fill(255);
-        text("BPM: " + inByte, 400, 125);
+        if (millis() % 128 == 0){ // if millis() is a multiply of 128, print the bpm value
+          fill(49, 65, 161); // bpm container
+          noStroke(); // delete border for the container
+          rect(300, 115, 200, 50);
+          fill(255);
+          text("BPM: " + inByte, 400, 125);
         }
       
-        StopButton();
+        StopButton(); 
         StopButtonController();
+        
+        // map the waveform from serial input
         inByte = map(inByte, 0, 1023, 0, height/2);
         height_new = height - inByte; 
         line(xPos - 1, height_old, xPos, height_new);
         height_old = height_new;
-        if (xPos >= width) {
+        if (xPos >= width) { // if the waveform is at the end of screen, back to the start of the screenWidth (x = 0)
           xPos = 0;
           background(49, 65, 161);
         } 
@@ -66,12 +69,12 @@ void draw () {
         }
 }
 
-void serialEvent (Serial myPort) {
+void serialEvent (Serial myPort) { // fetching serial data
   try {
-      inString = myPort.readStringUntil('\n');
-      println(inString);
+      inString = myPort.readStringUntil('\n'); // keep reading the data until a newline is present
+      println(inString); // print data to the console
 
-  if (inString != null) {
+  if (inString != null) { // if the data is present
     inString = trim(inString);
     if (inString.equals("!")) { 
       stroke(0); 
@@ -92,8 +95,7 @@ void serialEvent (Serial myPort) {
     }
   }
  }
-  // mencegah error dr arduino
-  catch(RuntimeException e) {
+  catch(RuntimeException e) { // print the stack trace instead of returning an error.
     e.printStackTrace();
   }
 }
